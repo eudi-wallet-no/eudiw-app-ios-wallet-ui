@@ -37,20 +37,9 @@ struct HomeTabView<Router: RouterHost>: View {
       openSignDocument: viewModel.openSignDocument(),
       toggleSignDocumentAlert: viewModel.toggleSignDocumentAlert()
     )
-    .confirmationDialog(
-      .authenticate,
-      isPresented: $viewModel.isAuthenticateModalShowing,
-      titleVisibility: .visible
-    ) {
-      Button(.inPerson) {
-        viewModel.onShare()
-      }
-      Button(.online) {
+    .onChange(of: viewModel.isAuthenticateModalShowing) { showOnline in
+        guard showOnline else { return }
         viewModel.onShowScanner()
-      }
-      Button(.cancelButton, role: .destructive) {}
-    } message: {
-      Text(.authenticateAuthoriseTransactions)
     }
     .dialogCompat(
       .bleDisabledModalTitle,
@@ -112,24 +101,6 @@ private func content(
         isPresented: isAuthenticateAlertShowing,
         title: .alertAccessOnlineServices,
         message: .alertAccessOnlineServicesMessage,
-        buttonText: .okButton,
-        onDismiss: nil
-      )
-
-      HomeCardView(
-        text: LocalizableStringKey.electronicallySignDigitalDocuments,
-        buttonText: LocalizableStringKey.signDocument,
-        illustration: Theme.shared.image.homeContract,
-        learnMoreText: LocalizableStringKey.learnMore,
-        learnMoreAction: {
-          toggleSignDocumentAlert()
-        },
-        action: openSignDocument()
-      )
-      .alertView(
-        isPresented: isSignDocumentAlertShowing,
-        title: .alertSignDocumentsSafely,
-        message: .alertSignDocumentsSafelyMessage,
         buttonText: .okButton,
         onDismiss: nil
       )
