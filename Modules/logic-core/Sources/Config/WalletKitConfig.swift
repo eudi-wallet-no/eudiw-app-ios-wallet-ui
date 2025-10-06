@@ -98,7 +98,7 @@ struct WalletKitConfigImpl: WalletKitConfig {
     return switch configLogic.appBuildVariant {
     case .DEMO:
         .init(
-          issuerUrl: "https://issuer.eudiw.dev",
+          issuerUrl: "https://utsteder.test.eidas2sandkasse.net",
           clientId: "wallet-dev",
           redirectUri: URL(string: "eu.europa.ec.euidi://authorization")!,
           usePAR: true,
@@ -106,7 +106,7 @@ struct WalletKitConfigImpl: WalletKitConfig {
         )
     case .DEV:
         .init(
-          issuerUrl: "https://demo-utsteder.test.eidas2sandkasse.net",
+          issuerUrl: "https://utsteder.test.eidas2sandkasse.net",
           clientId: "demo-lommebok",
           redirectUri: URL(string: "eu.europa.ec.euidi://authorization")!,
           usePAR: true,
