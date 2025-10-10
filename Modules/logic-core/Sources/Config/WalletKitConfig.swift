@@ -99,7 +99,7 @@ struct WalletKitConfigImpl: WalletKitConfig {
     case .DEMO:
         .init(
           issuerUrl: "https://utsteder.test.eidas2sandkasse.net",
-          clientId: "wallet-dev",
+          clientId: "demo-lommebok",
           redirectUri: URL(string: "eu.europa.ec.euidi://authorization")!,
           usePAR: true,
           useDPoP: true
@@ -107,7 +107,7 @@ struct WalletKitConfigImpl: WalletKitConfig {
     case .DEV:
         .init(
           issuerUrl: "https://utsteder.test.eidas2sandkasse.net",
-          clientId: "demo-lommebok",
+          clientId: "demo-lommebok-dev",
           redirectUri: URL(string: "eu.europa.ec.euidi://authorization")!,
           usePAR: true,
           useDPoP: true
