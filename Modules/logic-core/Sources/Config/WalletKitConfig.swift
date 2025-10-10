@@ -98,16 +98,8 @@ struct WalletKitConfigImpl: WalletKitConfig {
       case .DEMO:
         return [
           .init(
-            credentialIssuerURL: "https://issuer.eudiw.dev",
-            client: .public(id: "wallet-dev"),
-            authFlowRedirectionURI: URL(string: "eu.europa.ec.euidi://authorization")!,
-            usePAR: true,
-            useDpopIfSupported: true,
-            cacheIssuerMetadata: true
-          ),
-          .init(
-            credentialIssuerURL: "https://issuer-backend.eudiw.dev",
-            client: .public(id: "wallet-dev"),
+            credentialIssuerURL: "https://utsteder.test.eidas2sandkasse.net",
+            client: .public(id: "demo-lommebok-test"),
             authFlowRedirectionURI: URL(string: "eu.europa.ec.euidi://authorization")!,
             usePAR: true,
             useDpopIfSupported: true,
@@ -117,16 +109,8 @@ struct WalletKitConfigImpl: WalletKitConfig {
       case .DEV:
         return [
           .init(
-            credentialIssuerURL: "https://ec.dev.issuer.eudiw.dev",
-            client: .public(id: "wallet-dev"),
-            authFlowRedirectionURI: URL(string: "eu.europa.ec.euidi://authorization")!,
-            usePAR: true,
-            useDpopIfSupported: true,
-            cacheIssuerMetadata: true
-          ),
-          .init(
-            credentialIssuerURL: "https://dev.issuer-backend.eudiw.dev",
-            client: .public(id: "wallet-dev"),
+            credentialIssuerURL: "https://utsteder.eidas2sandkasse.dev",
+            client: .public(id: "demo-lommebok-dev"),
             authFlowRedirectionURI: URL(string: "eu.europa.ec.euidi://authorization")!,
             usePAR: true,
             useDpopIfSupported: true,
