@@ -94,6 +94,7 @@ struct WalletKitConfigImpl: WalletKitConfig {
     false
   }
 
+  // The configs and scheme linking to the test environment
   var vciConfig: VciConfig {
     return switch configLogic.appBuildVariant {
     case .DEMO:
