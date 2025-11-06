@@ -7,10 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-
-   SAST_caller:
-      uses: eu-digital-identity-wallet/eudi-infra-ci/.github/workflows/sast_action.yml@main
-      secrets:
-       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-       DOJO_TOKEN: ${{ secrets.DOJO_TOKEN }}
-       DOJO_URL: ${{ secrets.DOJO_URL }}
+  do_nothing:
+    runs-on: macos-latest
+    steps:
+      - run: echo "Doing nothing"
