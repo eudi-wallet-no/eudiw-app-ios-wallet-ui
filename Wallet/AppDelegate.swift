@@ -37,6 +37,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // Register the SVG coder so SDWebImage can decode & render .svg images
     SDImageCodersManager.shared.addCoder(SDImageSVGCoder.shared)
+      
+    // Dummy comment to force new push.
 
     return true
   }
