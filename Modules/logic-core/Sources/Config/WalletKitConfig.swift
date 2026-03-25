@@ -142,13 +142,27 @@ struct WalletKitConfigImpl: WalletKitConfig {
   }
 
   var readerConfig: ReaderConfig {
-    let certificates = [
+    let derCertificates = [
       "eidas2sandkasse_net_access_CA"
     ]
-    let certsData: [Data] = certificates.compactMap {
+    let derCertsData: [Data] = derCertificates.compactMap {
       Data(name: $0, ext: "der")
     }
-    return .init(trustedCerts: certsData)
+    
+    let pemCertificates: [String]
+    switch configLogic.appBuildVariant {
+    case .DEMO:
+      pemCertificates = ["eidas2sandkasse_net_intermediates_access_CA_DEMO"]
+    case .DEV:
+      pemCertificates = ["eidas2sandkasse_net_intermediates_access_CA_DEV"]
+    }
+    
+    let pemCertsData: [Data] = pemCertificates.compactMap {
+      Data(name: $0, ext: "pem")
+    }
+    let allCertsData = derCertsData + pemCertsData
+      
+    return .init(trustedCerts: allCertsData)
   }
 
   var documentStorageServiceName: String {
