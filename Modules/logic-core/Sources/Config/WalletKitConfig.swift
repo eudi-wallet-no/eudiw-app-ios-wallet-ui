@@ -149,18 +149,18 @@ struct WalletKitConfigImpl: WalletKitConfig {
       Data(name: $0, ext: "der")
     }
     
-    let pemCertificates: [String]
+    let otherCertificates: [String]
     switch configLogic.appBuildVariant {
     case .DEMO:
-      pemCertificates = ["eidas2sandkasse_net_intermediates_access_CA_DEMO"]
+        otherCertificates = ["eidas2sandkasse_net_access2_CA_DEMO"]
     case .DEV:
-      pemCertificates = ["eidas2sandkasse_net_intermediates_access_CA_DEV"]
+        otherCertificates = ["eidas2sandkasse_net_access2_CA_DEV"]
     }
     
-    let pemCertsData: [Data] = pemCertificates.compactMap {
-      Data(name: $0, ext: "pem")
+    let otherCertsData: [Data] = otherCertificates.compactMap {
+      Data(name: $0, ext: "crt")
     }
-    let allCertsData = derCertsData + pemCertsData
+    let allCertsData = derCertsData + otherCertsData
       
     return .init(trustedCerts: allCertsData)
   }
