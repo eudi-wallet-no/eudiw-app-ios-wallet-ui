@@ -17,6 +17,6 @@
 @_exported import MdocDataModel18013
 @_exported import EudiWalletKit
 @_exported import MdocSecurity18013
-@_exported import MdocDataTransfer18013
+@preconcurrency @_exported import MdocDataTransfer18013
 @_exported import WalletStorage
 @_exported import StatiumSwift
