@@ -43,7 +43,7 @@ let package = Package(
         "logic-api",
         .product(
           name: "EudiWalletKit",
-          package: "eudi-lib-ios-wallet-kit-digdir"
+          package: "eudi-lib-ios-wallet-kit"
         )
       ],
       path: "./Sources"
