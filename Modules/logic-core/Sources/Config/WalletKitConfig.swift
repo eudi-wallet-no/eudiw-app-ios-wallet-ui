@@ -152,10 +152,10 @@ struct WalletKitConfigImpl: WalletKitConfig {
         ]
     case .DEV:
         certificates = [
-            "r45_staging",
             "eidas2sandkasse_net_access_CA",
             "eidas2sandkasse_dev_access_CA",
-            "eidas2sandkasse_dev_access2_CA"
+            "eidas2sandkasse_dev_access2_CA",
+            "r45_staging"
         ]
     }
       
