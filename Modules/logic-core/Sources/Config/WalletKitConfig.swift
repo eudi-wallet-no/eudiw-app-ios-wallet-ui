@@ -103,25 +103,13 @@ struct WalletKitConfigImpl: WalletKitConfig {
               cacheIssuerMetadata: true
             ),
             order: 1
-          ),
-          .init(
-            config: .init(
-              credentialIssuerURL: "https://utsteder.eidas2sandkasse.dev/pid",
-              clientId: "demo-lommebok-test",
-              keyAttestationsConfig: .init(walletAttestationsProvider: walletKitAttestationProvider),
-              authFlowRedirectionURI: URL(string: "eu.europa.ec.euidi://authorization")!,
-              requirePAR: true,
-              requireDpop: true,
-              cacheIssuerMetadata: true
-            ),
-            order: 1
           )
         ]
       case .DEV:
         return [
           .init(
             config: .init(
-              credentialIssuerURL: "https://utsteder.eidas2sandkasse.dev",
+              credentialIssuerURL: "https://utsteder.eidas2sandkasse.dev/pid",
               clientId: "demo-lommebok-dev",
               keyAttestationsConfig: .init(walletAttestationsProvider: walletKitAttestationProvider),
               authFlowRedirectionURI: URL(string: "eu.europa.ec.euidi://authorization")!,
