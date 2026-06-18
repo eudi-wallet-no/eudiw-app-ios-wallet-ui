@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 European Commission
+ * Copyright (c) 2026 European Commission
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the European
  * Commission - subsequent versions of the EUPL (the "Licence"); You may not use this work
@@ -69,7 +69,23 @@ struct ConfigLogicImpl: ConfigLogic {
   }
 
   public var appVersion: String {
-    getBundleValue(key: "CFBundleShortVersionString")
+    // let appVersion = getBundleValue(key: "CFBundleShortVersionString") as? String ?? "1.0.0"
+
+    var buildDateString: String {
+        let executableURL = Bundle.main.bundleURL.appendingPathComponent(Bundle.main.object(forInfoDictionaryKey: "CFBundleExecutable") as? String ?? "")
+        
+        if let attributes = try? FileManager.default.attributesOfItem(atPath: executableURL.path),
+         let creationDate = attributes[.creationDate] as? Date {
+          
+          let formatter = DateFormatter()
+          formatter.dateFormat = "dd.MM.yy" // Format: 12.06.26
+          return formatter.string(from: creationDate)
+      }
+      return "Unknown date"
+    }
+
+    /// Returns a combined string formatted  (e.g., "Version 12.06.26_14:30")
+    return "Version date: (\(buildDateString))"
   }
 
   public var appBuildVariant: AppBuildVariant {
