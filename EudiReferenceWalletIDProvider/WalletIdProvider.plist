@@ -4,11 +4,6 @@
 <dict>
 	<key>CFBundleVersion</key>
 	<string>1</string>
-	<key>EXAppExtensionAttributes</key>
-	<dict>
-		<key>EXExtensionPointIdentifier</key>
-		<string>com.apple.identity-document-services.document-provider-ui</string>
-	</dict>
 	<key>Team ID</key>
 	<string>$(APP_TEAM_ID)</string>
 </dict>
