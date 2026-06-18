@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 European Commission
+ * Copyright (c) 2026 European Commission
  *
  * Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the European
  * Commission - subsequent versions of the EUPL (the "Licence"); You may not use this work
@@ -49,8 +49,8 @@ public struct ListItemData: Identifiable, Sendable, Equatable {
     mainStyle: MainStyle = .plain,
     overlineText: LocalizableStringKey? = nil,
     supportingText: LocalizableStringKey? = nil,
-    supportingTextColor: Color = Theme.shared.color.onSurfaceVariant,
-    overlineTextColor: Color = Theme.shared.color.onSurfaceVariant,
+    supportingTextColor: Color = Theme.shared.color.secondaryLabel,
+    overlineTextColor: Color = Theme.shared.color.secondaryLabel,
     leadingIcon: LeadingIcon? = nil,
     isBlur: Bool = false,
     isEnable: Bool = true,
@@ -110,8 +110,8 @@ public enum MainContent: Sendable, Equatable {
 }
 
 public enum TrailingContent: Sendable, Equatable {
-  case textWithIcon(Image, Color = Color.accentColor, LocalizableStringKey = .custom(""))
-  case icon(Image, Color = Color.accentColor)
+  case textWithIcon(Image, Color = Theme.shared.color.accent, LocalizableStringKey = .custom(""))
+  case icon(Image, Color = Theme.shared.color.accent)
   case checkbox(Bool, Bool, @Sendable (Bool) -> Void)
   case empty
 
