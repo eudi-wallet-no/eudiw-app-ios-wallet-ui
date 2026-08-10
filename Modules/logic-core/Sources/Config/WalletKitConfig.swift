@@ -117,32 +117,12 @@ struct WalletKitConfigImpl: WalletKitConfig {
                   accessControl: []
                 )
               ),
-              authFlowRedirectionURI: URL(string: "eu.europa.ec.euidi://authorization")!,
               parUsage: .required(authorizationCodeDPoPBinding: true),
               requireDpop: true,
-              issuerMetadataPolicy: trustConfiguration.issuerMetadataPolicy,
+              issuerMetadataPolicy: .ignoreSigned,
               cacheIssuerMetadata: true
             ),
             order: 1
-          ),
-          .init(
-            config: .init(
-              credentialIssuerURL: "https://issuer-backend.eudiw.dev",
-              clientId: "eudiw-abca",
-              keyAttestationsConfig: .init(
-                walletAttestationsProvider: walletKitAttestationProvider,
-                popKeyOptions: KeyOptions(
-                  secureAreaName: SecureEnclaveSecureArea.name,
-                  accessControl: []
-                )
-              ),
-              authFlowRedirectionURI: URL(string: "eu.europa.ec.euidi://authorization")!,
-              parUsage: .required(authorizationCodeDPoPBinding: true),
-              requireDpop: true,
-              issuerMetadataPolicy: trustConfiguration.issuerMetadataPolicy,
-              cacheIssuerMetadata: true
-            ),
-            order: 0
           )
         ]
       case .DEV:
@@ -158,32 +138,12 @@ struct WalletKitConfigImpl: WalletKitConfig {
                   accessControl: []
                 )
               ),
-              authFlowRedirectionURI: URL(string: "eu.europa.ec.euidi://authorization")!,
               parUsage: .required(authorizationCodeDPoPBinding: true),
               requireDpop: true,
-              issuerMetadataPolicy: trustConfiguration.issuerMetadataPolicy,
+              issuerMetadataPolicy: .ignoreSigned,
               cacheIssuerMetadata: true
             ),
             order: 1
-          ),
-          .init(
-            config: .init(
-              credentialIssuerURL: "https://dev.issuer-backend.eudiw.dev",
-              clientId: "eudiw-abca",
-              keyAttestationsConfig: .init(
-                walletAttestationsProvider: walletKitAttestationProvider,
-                popKeyOptions: KeyOptions(
-                  secureAreaName: SecureEnclaveSecureArea.name,
-                  accessControl: []
-                )
-              ),
-              authFlowRedirectionURI: URL(string: "eu.europa.ec.euidi://authorization")!,
-              parUsage: .required(authorizationCodeDPoPBinding: true),
-              requireDpop: true,
-              issuerMetadataPolicy: trustConfiguration.issuerMetadataPolicy,
-              cacheIssuerMetadata: true
-            ),
-            order: 0
           )
         ]
       }
@@ -210,34 +170,24 @@ struct WalletKitConfigImpl: WalletKitConfig {
   }
     
   var trustConfiguration: TrustConfiguration {
-    let loteLocations = SupportedLists<NSString>(
-      pidProviders: "https://trustedlist.serviceproviders.eudiw.dev/LOTE/json/PIDProviders.jwt",
-      walletProviders: nil,
-      wrpacProviders: "https://trustedlist.serviceproviders.eudiw.dev/LOTE/json/WRPACProviders.jwt",
-      wrprcProviders: nil,
-      pubEaaProviders: "https://trustedlist.serviceproviders.eudiw.dev/LOTE/json/PubEAAProviders.jwt",
-      qeaProviders: nil,
-      eaaProviders: [:]
-    )
-
+      /*
     let classifications: EtsiContextTypeMappings = [
       DocumentTypeIdentifier.mDocPid.rawValue: .pid,
       DocumentTypeIdentifier.sdJwtPid.rawValue: .pid
     ]
+       */
 
     return TrustConfiguration(
-      trustSource: .etsi(
-        EtsiTrustSource(
-          loteLocations: loteLocations,
-          contextTypeMappings: classifications
+      // ONLY trusts our bundled Norwegian eidas2sandkasse root CAs. Using a static list instead of
+      // ETSI LoTE (List of Trusted Entities) infrastructure.
+      trustSource: .staticList(
+        StaticListTrustSource(
+          rootCertificates: staticRootCertificates,
+          method: .pkix
         )
       ),
-      fallbackTrustSource: .staticList(
-        StaticListTrustSource(rootCertificates: staticRootCertificates)
-      ),
-      defaultPolicy: .warning,
-      requireSignedMetadata: true,
-      statusTrustPolicy: .warning
+      fallbackTrustSource: nil,
+      requireSignedMetadata: true
     )
   }
 
