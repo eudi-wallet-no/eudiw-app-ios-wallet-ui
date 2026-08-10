@@ -29,7 +29,10 @@ public protocol ImageManagerProtocol: Sendable {
   var chevronLeft: Image { get }
   var xmark: Image { get }
   var exclamationmarkCircle: Image { get }
+  var exclamationmarkTriangleFill: Image { get }
   var circle: Image { get }
+  var radioButtonSelected: Image { get }
+  var radioButtonUnselected: Image { get }
   var eye: Image { get }
   var eyeSlash: Image { get }
   var checkmarkCircleFill: Image { get }
@@ -93,7 +96,10 @@ final class ImageManager: ImageManagerProtocol {
     case chevronLeft = "chevron.left"
     case xmark = "xmark"
     case exclamationmarkCircle = "exclamationmark.circle"
+    case exclamationmarkTriangleFill = "exclamationmark.triangle.fill"
     case circle = "circle.fill"
+    case radioButtonSelected = "largecircle.fill.circle"
+    case radioButtonUnselected = "circle"
     case eye = "eye"
     case eyeSlash = "eye.slash"
     case checkmarkCircleFill = "checkmark.circle.fill"
@@ -195,8 +201,17 @@ final class ImageManager: ImageManagerProtocol {
   var exclamationmarkCircle: Image {
     Image(systemName: ImageEnum.exclamationmarkCircle.rawValue)
   }
+  var exclamationmarkTriangleFill: Image {
+    Image(systemName: ImageEnum.exclamationmarkTriangleFill.rawValue)
+  }
   var circle: Image {
     Image(systemName: ImageEnum.circle.rawValue)
+  }
+  var radioButtonSelected: Image {
+    Image(systemName: ImageEnum.radioButtonSelected.rawValue)
+  }
+  var radioButtonUnselected: Image {
+    Image(systemName: ImageEnum.radioButtonUnselected.rawValue)
   }
   var eye: Image {
     Image(systemName: ImageEnum.eye.rawValue)

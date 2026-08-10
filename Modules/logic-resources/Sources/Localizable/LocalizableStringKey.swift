@@ -31,6 +31,7 @@ public enum LocalizableStringKey: Equatable, Sendable {
   case requestDataCaption
   case requestDataInfoNotice
   case requestDataTitle([String])
+  case requestCombinationTitle([String])
   case documentAdded
   case requestDataSheetCaption
   case okButton
@@ -236,6 +237,10 @@ public enum LocalizableStringKey: Equatable, Sendable {
   case revoked
   case revokedModalTitle
   case revokedModalDescription
+  case issuanceBlockedTitle
+  case issuanceBlockedMessage
+  case presentationBlockedTitle
+  case presentationBlockedMessage
   case transactionDetailsRequestDeletionMessage
   case transactionDetailsRequestDeletionButton
   case transactionDetailsReportTransactionMessage
@@ -255,15 +260,18 @@ public enum LocalizableStringKey: Equatable, Sendable {
   case documentDetailsReIssueButton
   case documentDetailsRemoveButton
   case documentDetailsExpiresOn([String])
+  case documentDetailsExpiredOn([String])
   case documentDetailsIssuedOn([String])
   case documentDetailsRevokedDocument
   case documentDetailsIssuerCardIssuedMessageText
   case documentDetailsIssuerCardRevokedMessageText
+  case documentDetailsIssuerCardExpiredMessageText
   case documentDetailsIssuerCardIssuedActionButtonText
   case batchIssuanceCounter
   case documentProviderExtensionAcceptButton
   case documentProviderExtensionRejectButton
   case enterYourPin
+  case homeScreenAuthenticateDescription
 }
 
 public extension LocalizableStringKey {

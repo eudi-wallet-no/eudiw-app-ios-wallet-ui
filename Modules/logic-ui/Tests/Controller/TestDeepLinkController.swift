@@ -549,17 +549,13 @@ private extension TestDeepLinkController {
       ""
     }
     
-    func receiveRequest() async throws -> MdocDataTransfer18013.UserRequestInfo {
-      .init(docDataFormats: [DocumentTypeIdentifier.mDocPid.rawValue : .cbor], itemsRequested: RequestItems())
+    func receiveRequest() async throws -> [MdocDataTransfer18013.UserRequestInfo] {
+      [.init(docDataFormats: [DocumentTypeIdentifier.mDocPid.rawValue : .cbor], itemsRequested: RequestItems())]
     }
     
     var flow: EudiWalletKit.FlowType
-    
-    func startQrEngagement() async throws -> String? { nil }
-    
-    func receiveRequest() async throws -> [String : Any] { [:] }
-    
-    func sendResponse(userAccepted: Bool, itemsToSend: EudiWalletKit.RequestItems, onSuccess: ((URL?) -> Void)?) async throws {}
+
+    func sendResponse(userAccepted: Bool, itemsToSend: EudiWalletKit.RequestItems, deviceNameSpacesToSend: MdocDataTransfer18013.RequestDeviceNameSpaces?, onSuccess: (@Sendable (URL?) -> Void)?) async throws {}
   }
   
   static let mockTransactionLog: TransactionLog = .init(
