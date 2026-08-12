@@ -90,6 +90,13 @@ struct DocumentDetailsView<Router: RouterHost>: View {
         }
       }
     )
+    .sheetDialog(isPresented: $viewModel.isIssuerNotTrustedSheetShowing) {
+      TrustBlockedSheetContent(
+        title: .issuanceBlockedTitle,
+        message: .issuanceBlockedMessage,
+        onClose: { viewModel.isIssuerNotTrustedSheetShowing = false }
+      )
+    }
     .task {
       await viewModel.fetchDocumentDetails()
     }
@@ -158,20 +165,12 @@ private struct DocumentDetailsViewContainer: View {
             Button {
               toggleIsVisible()
             } label: {
-              HStack(spacing: SPACING_SMALL) {
-                (isVisible ? Theme.shared.image.eyeSlash : Theme.shared.image.eye)
-                  .resizable()
-                  .aspectRatio(contentMode: .fit)
-                  .frame(width: 24, height: 24)
-
-                Text(isVisible ? .documentDetailsShow : .documentDetailsHide)
-                  .typography(Theme.shared.font.bodyMedium)
-                  .fontWeight(.semibold)
-                  .frame(alignment: .leading)
-              }
-              .frame(alignment: .trailing)
-              .foregroundStyle(Theme.shared.color.accent)
-              .shimmer(isLoading: viewState.isLoading)
+              (isVisible ? Theme.shared.image.eyeSlash : Theme.shared.image.eye)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 24, height: 24)
+                .foregroundStyle(Theme.shared.color.accent)
+                .shimmer(isLoading: viewState.isLoading)
             }
             .buttonStyle(.plain)
             .accessibilityLocator(isVisible ? DocumentDetailsLocators.eyeSlash : DocumentDetailsLocators.eye)
@@ -194,9 +193,10 @@ private struct DocumentDetailsViewContainer: View {
         .combineChilrenAccessibility(
           locator: DocumentDetailsLocators.deleteDocument
         )
-        .confirmationDialog(
-          .custom(""),
+        .alertView(
           isPresented: $isDeletionModalShowing,
+          title: .custom(""),
+          message: .deleteDocumentConfirmDialog,
           actions: {
             Button(.documentDetailsRemoveButton, role: .destructive) {
               onDeleteDocument()
@@ -204,13 +204,9 @@ private struct DocumentDetailsViewContainer: View {
             .accessibilityElement()
             .accessibilityIdentifier(DocumentDetailsLocators.confirmDialogDeleteButton.id)
 
-            Button(.cancelButton) {
-              onShowDeleteModal()
-            }
-            .accessibilityElement()
-            .accessibilityIdentifier(DocumentDetailsLocators.confirmDialogDeleteButton.id)
-          }, message: {
-            Text(.deleteDocumentConfirmDialog)
+            Button(.cancelButton, role: .cancel) {}
+              .accessibilityElement()
+              .accessibilityIdentifier(DocumentDetailsLocators.confirmDialogCancelButton.id)
           }
         )
 

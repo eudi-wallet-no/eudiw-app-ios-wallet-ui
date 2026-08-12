@@ -73,7 +73,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Identify yourself to a wide range of public and private online services while protecting your privacy. Prove who you are with just a few taps — no need to manage countless passwords."
+            "value" : "Identify yourself to a wide range of public and private online services while protecting your privacy. Prove who you are with just a few taps."
           }
         }
       }
@@ -128,7 +128,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Authenticate, authorise transactions and share your digital documentsin person or online."
+            "value" : "Authenticate, authorise transactions and share your digital documents in person or online."
           }
         }
       }
@@ -584,6 +584,17 @@
         }
       }
     },
+    "document_details_expired_on" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expired on: %@"
+          }
+        }
+      }
+    },
     "document_details_hide" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -635,6 +646,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "This document cannot be used for verification."
+          }
+        }
+      }
+    },
+    "document_details_issuer_card_expired_message_text" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This document has expired. You may reissue it."
           }
         }
       }
@@ -755,7 +777,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Electronically sign digital documents with your wallet by choosing a file from your device."
+            "value" : "Electronically sign digital documents with your wallet by choosing a file from your device or by scanning a QR code."
           }
         }
       }
@@ -1027,6 +1049,17 @@
         }
       }
     },
+    "home_screen_authenticate_description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Authenticate by sharing your data in person (in close proximity) or online (website/service)."
+          }
+        }
+      }
+    },
     "in_person" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1089,6 +1122,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Issuance"
+          }
+        }
+      }
+    },
+    "issuance_blocked_bottom_sheet_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Issuance blocked"
+          }
+        }
+      }
+    },
+    "issuance_blocked_bottom_sheet_message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This issuance request has been blocked because the provider could not be verified by your Wallet.\n\nYour personal information or other data has not been shared with this provider."
+          }
+        }
+      }
+    },
+    "request_blocked_bottom_sheet_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Presentation blocked"
+          }
+        }
+      }
+    },
+    "request_blocked_bottom_sheet_message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This presentation request has been blocked because the relying party could not be verified by your Wallet.\n\nYour personal information or other data has not been shared with this relying party."
           }
         }
       }
@@ -1652,7 +1729,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Your Waller is ready for use."
+            "value" : "Your Wallet is ready for use."
           }
         }
       }
@@ -1862,6 +1939,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The document was successfully removed from your favorite list"
+          }
+        }
+      }
+    },
+    "request_combination_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Option %@ of %@"
           }
         }
       }

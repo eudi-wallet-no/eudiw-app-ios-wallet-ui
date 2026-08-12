@@ -57,7 +57,7 @@ extension Constants {
     var docDataFormat: MdocDataModel18013.DocDataFormat
     var validFrom: Date?
     var validUntil: Date?
-    var statusIdentifier: MdocDataModel18013.StatusIdentifier?
+    var statusList: MdocDataModel18013.StatusList?
     var secureAreaName: String?
     var credentialsUsageCounts: MdocDataModel18013.CredentialsUsageCounts?
     var credentialPolicy: MdocDataModel18013.CredentialPolicy
@@ -95,7 +95,7 @@ extension Constants {
       docDataFormat: .cbor,
       validFrom: nil,
       validUntil: nil,
-      statusIdentifier: nil,
+      statusList: nil,
       secureAreaName: nil,
       credentialsUsageCounts: credentialsUsageCounts,
       credentialPolicy: .oneTimeUse,
@@ -134,7 +134,7 @@ extension Constants {
       docDataFormat: .cbor,
       validFrom: nil,
       validUntil: nil,
-      statusIdentifier: nil,
+      statusList: nil,
       secureAreaName: nil,
       credentialsUsageCounts: credentialsUsageCounts,
       credentialPolicy: .oneTimeUse,
@@ -206,6 +206,8 @@ extension Constants {
 
 extension Constants {
   struct MockPresentationService: PresentationService {
+    func sendResponse(userAccepted: Bool, itemsToSend: EudiWalletKit.RequestItems, deviceNameSpacesToSend: MdocDataTransfer18013.RequestDeviceNameSpaces?, onSuccess: (@Sendable (URL?) -> Void)?) async throws {}
+
     var zkpDocumentIds: [WalletStorage.Document.ID]?
     
     func waitForDisconnect() async throws {}
@@ -216,20 +218,16 @@ extension Constants {
       ""
     }
     
-    func receiveRequest() async throws -> MdocDataTransfer18013.UserRequestInfo {
-      .init(
-        docDataFormats: [DocumentTypeIdentifier.mDocPid.rawValue : .cbor],
-        itemsRequested: RequestItems()
-      )
+    func receiveRequest() async throws -> [MdocDataTransfer18013.UserRequestInfo] {
+      [
+        .init(
+          docDataFormats: [DocumentTypeIdentifier.mDocPid.rawValue : .cbor],
+          itemsRequested: RequestItems()
+        )
+      ]
     }
     
     var flow: EudiWalletKit.FlowType
-    
-    func startQrEngagement() async throws -> String? { nil }
-    
-    func receiveRequest() async throws -> [String : Any] { [:] }
-    
-    func sendResponse(userAccepted: Bool, itemsToSend: EudiWalletKit.RequestItems, onSuccess: ((URL?) -> Void)?) async throws {}
   }
   
   static let mockTransactionLog: TransactionLog = .init(
@@ -311,28 +309,30 @@ extension Constants {
 
 extension Constants {
   static let mockPresentationRequest = PresentationRequest(
-    items: [
-      .msoMdoc(
-        .init(
-          docId: isoMdlModelId,
-          docType: isoMdlDocType,
-          displayName: isoMdlName,
-          nameSpacedElements: [
-            .init(
-              nameSpace: "nameSpace",
-              elements: [
-                .init(
-                  elementIdentifier: "elementIdentifier",
-                  isOptional: false,
-                  stringValue: "value",
-                  docClaim: .init(name: "elementIdentifier", dataValue: .string("value"), stringValue: "value"),
-                  isValid: true
-                )
-              ]
-            )
-          ]
+    itemSets: [
+      [
+        .msoMdoc(
+          .init(
+            docId: isoMdlModelId,
+            docType: isoMdlDocType,
+            displayName: isoMdlName,
+            nameSpacedElements: [
+              .init(
+                nameSpace: "nameSpace",
+                elements: [
+                  .init(
+                    elementIdentifier: "elementIdentifier",
+                    isOptional: false,
+                    stringValue: "value",
+                    docClaim: .init(name: "elementIdentifier", dataValue: .string("value"), stringValue: "value"),
+                    isValid: true
+                  )
+                ]
+              )
+            ]
+          )
         )
-      )
+      ]
     ],
     relyingParty: "Relying Party",
     dataRequestInfo: "Data Request Info",

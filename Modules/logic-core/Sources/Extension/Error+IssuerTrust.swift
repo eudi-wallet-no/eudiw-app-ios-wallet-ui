@@ -13,10 +13,31 @@
  * ANY KIND, either express or implied. See the Licence for the specific language
  * governing permissions and limitations under the Licence.
  */
+import Foundation
+import EudiWalletKit
+import MdocSecurity18013
 
-public struct PresentationRequest: Sendable, Equatable {
-  public let itemSets: [[DocElements]]
-  public let relyingParty: String
-  public let dataRequestInfo: String
-  public let isTrusted: Bool
+public extension Error {
+  var isIssuerNotTrusted: Bool {
+    if let walletError = self as? WalletError, walletError.code == .trustError {
+      return true
+    }
+    if let msoError = self as? MsoValidationError, msoError.containsIssuerTrustFailure {
+      return true
+    }
+    return false
+  }
+}
+
+private extension MsoValidationError {
+  var containsIssuerTrustFailure: Bool {
+    switch self {
+    case .issuerTrustFailed:
+      return true
+    case .multipleErrors(let errors):
+      return errors.contains { $0.containsIssuerTrustFailure }
+    default:
+      return false
+    }
+  }
 }
