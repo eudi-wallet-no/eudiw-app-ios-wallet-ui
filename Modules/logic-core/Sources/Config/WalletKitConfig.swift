@@ -170,6 +170,17 @@ struct WalletKitConfigImpl: WalletKitConfig {
   }
     
   var trustConfiguration: TrustConfiguration {
+    /*
+    let loteLocations = SupportedLists<NSString>(
+      pidProviders: "https://trustedlist.serviceproviders.eudiw.dev/LOTE/json/PIDProviders.jwt",
+      walletProviders: nil,
+      wrpacProviders: "https://trustedlist.serviceproviders.eudiw.dev/LOTE/json/WRPACProviders.jwt",
+      wrprcProviders: nil,
+      pubEaaProviders: "https://trustedlist.serviceproviders.eudiw.dev/LOTE/json/PubEAAProviders.jwt",
+      qeaProviders: nil,
+      eaaProviders: [:]
+    )
+     */
       /*
     let classifications: EtsiContextTypeMappings = [
       DocumentTypeIdentifier.mDocPid.rawValue: .pid,
@@ -189,6 +200,24 @@ struct WalletKitConfigImpl: WalletKitConfig {
       fallbackTrustSource: nil,
       requireSignedMetadata: true
     )
+      
+      /*
+       return TrustConfiguration(
+         trustSource: .etsi(
+           EtsiTrustSource(
+             loteLocations: loteLocations,
+             contextTypeMappings: classifications
+           )
+         ),
+         fallbackTrustSource: .staticList(
+           StaticListTrustSource(rootCertificates: staticRootCertificates)
+         ),
+         defaultPolicy: .warning,
+         requireSignedMetadata: true,
+         statusTrustPolicy: .warning
+       )
+     }
+       */
   }
 
   var staticRootCertificates: [Data] {
