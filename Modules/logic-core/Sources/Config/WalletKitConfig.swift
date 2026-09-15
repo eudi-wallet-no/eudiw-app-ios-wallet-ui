@@ -234,34 +234,46 @@ struct WalletKitConfigImpl: WalletKitConfig {
   }
     
   var trustConfiguration: TrustConfiguration {
-    /*
-    let loteLocations = SupportedLists<NSString>(
-      pidProviders: "https://trustedlist.serviceproviders.eudiw.dev/LOTE/json/PIDProviders.jwt",
-      walletProviders: nil,
-      wrpacProviders: "https://trustedlist.serviceproviders.eudiw.dev/LOTE/json/WRPACProviders.jwt",
-      wrprcProviders: "https://trustedlist.serviceproviders.eudiw.dev/LOTE/json/WRPRCProviders.jwt",
-      pubEaaProviders: "https://trustedlist.serviceproviders.eudiw.dev/LOTE/json/PubEAAProviders.jwt",
-      qeaProviders: nil,
-      eaaProviders: [:]
-    )
-     */
-      /*
+    
+    let loteLocations: SupportedLists<NSString>
+    switch configLogic.appBuildVariant {
+    case .DEMO:
+      loteLocations = SupportedLists<NSString>(
+        pidProviders: "https://tillitsliste.test.eidas2sandkasse.net/no_eidas2sandkasse_test_pid",
+        walletProviders: nil,
+        wrpacProviders: "https://tillitsliste.test.eidas2sandkasse.net/no_eidas2sandkasse_test_wallet",
+        wrprcProviders: nil,
+        pubEaaProviders: "https://tillitsliste.test.eidas2sandkasse.net/no_eidas2sandkasse_test_aca",
+        qeaProviders: nil,
+        eaaProviders: [:]
+      )
+    case .DEV:
+      loteLocations = SupportedLists<NSString>(
+        pidProviders: "https://tillitsliste.eidas2sandkasse.dev/no_eidas2sandkasse_dev_pid",
+        walletProviders: nil,
+        wrpacProviders: "https://tillitsliste.eidas2sandkasse.dev/no_eidas2sandkasse_dev_wallet",
+        wrprcProviders: nil,
+        pubEaaProviders: "https://tillitsliste.eidas2sandkasse.dev/no_eidas2sandkasse_dev_aca",
+        qeaProviders: nil,
+        eaaProviders: [:]
+      )
+    }
+
+    
     let classifications: EtsiContextTypeMappings = [
       DocumentTypeIdentifier.mDocPid.rawValue: .pid,
       DocumentTypeIdentifier.sdJwtPid.rawValue: .pid
     ]
-       */
+    
 
     return TrustConfiguration(
-      // ONLY trusts our bundled Norwegian eidas2sandkasse root CAs. Using a static list instead of
-      // ETSI LoTE (List of Trusted Entities) infrastructure.
-      trustSource: .staticList(
-        StaticListTrustSource(
-          rootCertificates: staticRootCertificates,
-          method: .pkix
+      trustSource: .etsi(
+        EtsiTrustSource(
+          loteLocations: loteLocations,
+          contextTypeMappings: classifications
         )
       ),
-      fallbackTrustSource: .staticList(
+      fallbackTrustSource: .staticList(  // Fallback to trust our bundled Norwegian eidas2sandkasse root CAs.
         StaticListTrustSource(rootCertificates: staticRootCertificates)
       ),
       defaultPolicy: .warning,
@@ -270,17 +282,6 @@ struct WalletKitConfigImpl: WalletKitConfig {
       wrprcVpTrustPolicy: .warning,
       wrprcVciTrustPolicy: .enforce
     )
-      
-      /*
-       return TrustConfiguration(
-         trustSource: .etsi(
-           EtsiTrustSource(
-             loteLocations: loteLocations,
-             contextTypeMappings: classifications
-           )
-         ),
-     }
-       */
   }
 
   var staticRootCertificates: [Data] {
