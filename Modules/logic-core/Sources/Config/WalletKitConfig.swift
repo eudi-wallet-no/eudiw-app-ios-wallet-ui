@@ -244,7 +244,7 @@ struct WalletKitConfigImpl: WalletKitConfig {
         wrpacProviders: "https://tillitsliste.test.eidas2sandkasse.net/no_eidas2sandkasse_test_wallet",
         wrprcProviders: nil,
         pubEaaProviders: "https://tillitsliste.test.eidas2sandkasse.net/no_eidas2sandkasse_test_aca",
-        qeaProviders: nil,
+        qeaProviders: "https://tillitsliste.test.eidas2sandkasse.net/no_eidas2sandkasse_test_tsl.xtsl",
         eaaProviders: [:]
       )
     case .DEV:
@@ -254,7 +254,7 @@ struct WalletKitConfigImpl: WalletKitConfig {
         wrpacProviders: "https://tillitsliste.eidas2sandkasse.dev/no_eidas2sandkasse_dev_wallet",
         wrprcProviders: nil,
         pubEaaProviders: "https://tillitsliste.eidas2sandkasse.dev/no_eidas2sandkasse_dev_aca",
-        qeaProviders: nil,
+        qeaProviders: "https://tillitsliste.eidas2sandkasse.dev/no_eidas2sandkasse_dev_tsl.xtsl",
         eaaProviders: [:]
       )
     }
@@ -277,10 +277,10 @@ struct WalletKitConfigImpl: WalletKitConfig {
         StaticListTrustSource(rootCertificates: staticRootCertificates)
       ),
       defaultPolicy: .warning,
-      requireSignedMetadata: true,
+      requireSignedMetadata: false,
       statusTrustPolicy: .warning,
       wrprcVpTrustPolicy: .warning,
-      wrprcVciTrustPolicy: .enforce
+      wrprcVciTrustPolicy: .warning
     )
   }
 
