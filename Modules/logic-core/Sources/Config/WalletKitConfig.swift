@@ -182,7 +182,7 @@ struct WalletKitConfigImpl: WalletKitConfig {
               parUsage: .required(authorizationCodeDPoPBinding: true),
               requireDpop: true,
               issuerMetadataPolicy: trustConfiguration.issuerMetadataPolicy,
-              validateRegistrationCertificate: validateIssuerRegistrationCertificate,
+              validateRegistrationCertificate: false,
               cacheIssuerMetadata: false
             ),
             order: 1
@@ -239,21 +239,21 @@ struct WalletKitConfigImpl: WalletKitConfig {
     switch configLogic.appBuildVariant {
     case .DEMO:
       loteLocations = SupportedLists<NSString>(
-        pidProviders: "https://tillitsliste.test.eidas2sandkasse.net/no_eidas2sandkasse_test_pid",
-        walletProviders: nil,
-        wrpacProviders: "https://tillitsliste.test.eidas2sandkasse.net/no_eidas2sandkasse_test_wallet",
+        pidProviders: "https://tillitsliste.test.eidas2sandkasse.net/no_eidas2sandkasse_test_pid.jws",
+        walletProviders: "https://tillitsliste.test.eidas2sandkasse.net/no_eidas2sandkasse_test_wallet.jws",
+        wrpacProviders: "https://tillitsliste.test.eidas2sandkasse.net/no_eidas2sandkasse_test_aca.jws",
         wrprcProviders: nil,
-        pubEaaProviders: "https://tillitsliste.test.eidas2sandkasse.net/no_eidas2sandkasse_test_aca",
+        pubEaaProviders: nil,
         qeaProviders: "https://tillitsliste.test.eidas2sandkasse.net/no_eidas2sandkasse_test_tsl.xtsl",
         eaaProviders: [:]
       )
     case .DEV:
       loteLocations = SupportedLists<NSString>(
-        pidProviders: "https://tillitsliste.eidas2sandkasse.dev/no_eidas2sandkasse_dev_pid",
-        walletProviders: nil,
-        wrpacProviders: "https://tillitsliste.eidas2sandkasse.dev/no_eidas2sandkasse_dev_wallet",
+        pidProviders: "https://tillitsliste.eidas2sandkasse.dev/no_eidas2sandkasse_dev_pid.jws",
+        walletProviders: "https://tillitsliste.eidas2sandkasse.dev/no_eidas2sandkasse_dev_wallet.jws",
+        wrpacProviders: "https://tillitsliste.eidas2sandkasse.dev/no_eidas2sandkasse_dev_aca.jws",
         wrprcProviders: nil,
-        pubEaaProviders: "https://tillitsliste.eidas2sandkasse.dev/no_eidas2sandkasse_dev_aca",
+        pubEaaProviders: nil,
         qeaProviders: "https://tillitsliste.eidas2sandkasse.dev/no_eidas2sandkasse_dev_tsl.xtsl",
         eaaProviders: [:]
       )
