@@ -17,11 +17,19 @@ import Foundation
 import logic_business
 import EudiWalletKit
 import EudiEtsi1196x2
+import MdocDataModel18013
+import struct OpenID4VP.SupportedTransactionDataType
+import struct OpenID4VP.TransactionDataType
 
 protocol WalletKitConfig: Sendable {
 
   /**
-   * VCI Configuration
+   * VCI Configuration, keyed by issuer host.
+   *
+   * `allowPlainJwtProof` is set per issuer and defaults to `false`, which keeps the HAIP-compliant
+   * proof policy: only attested proofs (`attestation`, or `jwt` with key attestation) are sent.
+   * Set it to `true` only for an issuer that does not support key attestation and requires a plain
+   * JWT proof; the proof is then bound to a key without wallet attestation, using ES256/ES384/ES512.
    */
   var issuersConfig: [String: VciConfig] { get }
 
@@ -40,6 +48,14 @@ protocol WalletKitConfig: Sendable {
    * VP Configuration
    */
   var vpConfig: OpenId4VpConfiguration { get }
+
+  /**
+   * Transaction data types the wallet accepts in an OpenID4VP request.
+   *
+   * The OpenID4VP library rejects any request carrying `transaction_data` whose type is not
+   * listed here, so an empty list rejects every request with transaction data.
+   */
+  var supportedTransactionDataTypes: [SupportedTransactionDataType] { get }
 
   /**
    * Trust configuration: ETSI LoTE (List of Trusted Entities) trust sources,
@@ -81,6 +97,12 @@ protocol WalletKitConfig: Sendable {
    * Configuration for document issuance, including default rules and specific overrides.
    */
   var documentIssuanceConfig: DocumentIssuanceConfig { get }
+
+  /**
+   * Provides the information used to display the wallet's Trust Mark and link to its
+   * certification page and the list of certified wallets.
+   */
+  var trustMarkSource: TrustMarkSource { get }
 }
 
 struct WalletKitConfigImpl: WalletKitConfig {
@@ -136,6 +158,7 @@ struct WalletKitConfigImpl: WalletKitConfig {
                 )
               ),
               parUsage: .required(authorizationCodeDPoPBinding: true),
+              allowPlainJwtProof: false,
               requireDpop: true,
               issuerMetadataPolicy: trustConfiguration.issuerMetadataPolicy,
               validateRegistrationCertificate: validateIssuerRegistrationCertificate,
@@ -157,6 +180,7 @@ struct WalletKitConfigImpl: WalletKitConfig {
               ),
               authFlowRedirectionURI: URL(string: "eu.europa.ec.euidi://authorization")!,
               parUsage: .required(authorizationCodeDPoPBinding: true),
+              allowPlainJwtProof: false,
               requireDpop: true,
               issuerMetadataPolicy: trustConfiguration.issuerMetadataPolicy,
               validateRegistrationCertificate: validateIssuerRegistrationCertificate,
@@ -180,6 +204,7 @@ struct WalletKitConfigImpl: WalletKitConfig {
                 )
               ),
               parUsage: .required(authorizationCodeDPoPBinding: true),
+              allowPlainJwtProof: false,
               requireDpop: true,
               issuerMetadataPolicy: trustConfiguration.issuerMetadataPolicy,
               validateRegistrationCertificate: false,
@@ -200,6 +225,7 @@ struct WalletKitConfigImpl: WalletKitConfig {
               ),
               authFlowRedirectionURI: URL(string: "eu.europa.ec.euidi://authorization")!,
               parUsage: .required(authorizationCodeDPoPBinding: true),
+              allowPlainJwtProof: false,
               requireDpop: true,
               issuerMetadataPolicy: trustConfiguration.issuerMetadataPolicy,
               validateRegistrationCertificate: validateIssuerRegistrationCertificate,
@@ -229,10 +255,20 @@ struct WalletKitConfigImpl: WalletKitConfig {
   var vpConfig: OpenId4VpConfiguration {
     .init(
       clientIdSchemes: [.x509SanDns, .x509Hash],
+      supportedTransactionDataTypes: supportedTransactionDataTypes,
       validateRegistrationCertificate: validateIssuerRegistrationCertificate
     )
   }
-    
+
+  var supportedTransactionDataTypes: [SupportedTransactionDataType] {
+    let types = [
+      TransactionDataTypeIdentifier.qesApproval.rawValue
+    ]
+    return [.default()] + types.compactMap {
+      try? SupportedTransactionDataType(type: TransactionDataType(value: $0))
+    }
+  }
+
   var trustConfiguration: TrustConfiguration {
     
     let loteLocations: SupportedLists<NSString>
@@ -270,13 +306,18 @@ struct WalletKitConfigImpl: WalletKitConfig {
       trustSource: .etsi(
         EtsiTrustSource(
           loteLocations: loteLocations,
-          contextTypeMappings: classifications
+          contextTypeMappings: classifications,
+          isRevocationEnabled: false
         )
       ),
       fallbackTrustSource: .staticList(  // Fallback to trust our bundled Norwegian eidas2sandkasse root CAs.
         StaticListTrustSource(rootCertificates: staticRootCertificates)
       ),
       defaultPolicy: .warning,
+      docTypePolicies: [
+        DocumentTypeIdentifier.mDocPid.rawValue: .enforce,
+        DocumentTypeIdentifier.sdJwtPid.rawValue: .enforce
+      ],
       requireSignedMetadata: false,
       statusTrustPolicy: .warning,
       wrprcVpTrustPolicy: .warning,
@@ -402,6 +443,16 @@ struct WalletKitConfigImpl: WalletKitConfig {
         )
       )
     }
+  }
+
+  var trustMarkSource: TrustMarkSource {
+    .static(
+      information: TrustMarkInformation(
+        trustMarkResourceURL: "https://gist.githubusercontent.com/sraptis-scy/025334375fe26177d9a7bcb60fd8a93f/raw/TrustMarkResource.json",
+        listOfCertifiedWalletsURL: "https://eidas.ec.europa.eu/efda/wallet/certified",
+        walletSolutionInfoPageURL: "https://eidas.ec.europa.eu/efda/wallet/certified?id=WALLET_SOLUTION_ID"
+      )
+    )
   }
 }
 
