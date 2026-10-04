@@ -315,8 +315,8 @@ struct WalletKitConfigImpl: WalletKitConfig {
       ),
       defaultPolicy: .warning,
       docTypePolicies: [
-        DocumentTypeIdentifier.mDocPid.rawValue: .enforce,
-        DocumentTypeIdentifier.sdJwtPid.rawValue: .enforce
+        DocumentTypeIdentifier.mDocPid.rawValue: .warning,
+        DocumentTypeIdentifier.sdJwtPid.rawValue: .warning
       ],
       requireSignedMetadata: false,
       statusTrustPolicy: .warning,
