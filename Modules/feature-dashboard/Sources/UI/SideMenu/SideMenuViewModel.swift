@@ -91,13 +91,8 @@ final class SideMenuViewModel<Router: RouterHost>: ViewModel<Router, SideMenuVie
           .init(
             title: .settings,
             icon: Theme.shared.image.gearshape,
-            action: self.settings()
-          ),
-          .init(
-            title: .trustMarkAboutTitle,
-            icon: Theme.shared.image.infoCircle,
             showDivider: false,
-            action: self.about()
+            action: self.settings()
           )
         ]
       )
