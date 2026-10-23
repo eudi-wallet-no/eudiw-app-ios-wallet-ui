@@ -166,49 +166,9 @@ final class TestStartupInteractor: EudiTest {
     verifyFirstBootStorageManipulation(count: 1)
   }
 
-  func testInitialize_WhenTrustMarkIntroductionIsNotCompletedAndPinIsNotSet_ThenReturnTrustMarkWelcomeWithQuickPinContinuation() async throws {
+  func testInitialize_WhenTrustMarkIntroductionIsNotCompletedAndPinIsNotSet_ThenSkipTrustMarkAndReturnQuickPinAppRoute() async throws {
     // Given
-    let expectedConfig = TrustMarkUiConfig(
-      mode: .welcome(
-        continuationRoute: .featureCommonModule(
-          .quickPin(config: QuickPinUiConfig(flow: .setWithActivation))
-        )
-      )
-    )
-    stubFetchDocuments(with: [])
-    stubHasPin(with: false)
-    stubRunAtLeastOnce()
-    stubTrustMarkIntroductionCompleted(false)
-    // When
-    let route = await interactor.initialize(with: .zero)
-    // Then
-    let receivedConfig = try XCTUnwrap(trustMarkConfig(from: route))
-    XCTAssertEqual(receivedConfig, expectedConfig)
-    verifyFirstBootStorageManipulation(count: 0)
-  }
-
-  func testInitialize_WhenTrustMarkIntroductionIsNotCompletedAndPinIsSet_ThenReturnTrustMarkWelcomeWithBiometryContinuation() async throws {
-    // Given
-    let expectedConfig = TrustMarkUiConfig(
-      mode: .welcome(
-        continuationRoute: .featureCommonModule(
-          .biometry(config: biometryConfig(with: true))
-        )
-      )
-    )
-    stubFetchDocuments(with: [Constants.createEuPidModel()])
-    stubHasPin(with: true)
-    stubRunAtLeastOnce()
-    stubTrustMarkIntroductionCompleted(false)
-    // When
-    let route = await interactor.initialize(with: .zero)
-    // Then
-    let receivedConfig = try XCTUnwrap(trustMarkConfig(from: route))
-    XCTAssertEqual(receivedConfig, expectedConfig)
-  }
-
-  func testInitialize_WhenTrustMarkIntroductionIsNotCompletedAndIsFirstBoot_ThenClearDocumentStorageAndReturnTrustMarkWelcome() async throws {
-    // Given
+    let expectedConfig = QuickPinUiConfig(flow: .setWithActivation)
     stubFetchDocuments(with: [])
     stubHasPin(with: false)
     stubRunAtLeastOnce(false)
@@ -216,9 +176,43 @@ final class TestStartupInteractor: EudiTest {
     // When
     let route = await interactor.initialize(with: .zero)
     // Then
-    let receivedConfig = try XCTUnwrap(trustMarkConfig(from: route))
-    XCTAssertTrue(receivedConfig.isWelcome)
+    XCTAssertNil(trustMarkConfig(from: route))
+    switch route {
+    case .featureCommonModule(let module):
+      if case .quickPin(let config) = module {
+        let receivedConfig = try XCTUnwrap(config as? QuickPinUiConfig)
+        XCTAssertEqual(receivedConfig, expectedConfig)
+      } else {
+        XCTFail("Wrong route \(route)")
+      }
+    default:
+      XCTFail("Wrong route \(route)")
+    }
     verifyFirstBootStorageManipulation(count: 1)
+  }
+
+  func testInitialize_WhenTrustMarkIntroductionIsNotCompletedAndPinIsSet_ThenSkipTrustMarkAndReturnBiometricsAppRoute() async throws {
+    // Given
+    let expectedConfig = biometryConfig(with: true)
+    stubFetchDocuments(with: [Constants.createEuPidModel()])
+    stubHasPin(with: true)
+    stubRunAtLeastOnce()
+    stubTrustMarkIntroductionCompleted(false)
+    // When
+    let route = await interactor.initialize(with: .zero)
+    // Then
+    XCTAssertNil(trustMarkConfig(from: route))
+    switch route {
+    case .featureCommonModule(let module):
+      if case .biometry(let config) = module {
+        let receivedConfig = try XCTUnwrap(config as? UIConfig.Biometry)
+        XCTAssertEqual(receivedConfig, expectedConfig)
+      } else {
+        XCTFail("Wrong route \(route)")
+      }
+    default:
+      XCTFail("Wrong route \(route)")
+    }
   }
 }
 
