@@ -14,8 +14,10 @@
  * governing permissions and limitations under the Licence.
  */
 import XCTest
+import os
 import logic_business
 import logic_core
+import logic_authentication
 @testable import feature_startup
 @testable import logic_test
 @testable import feature_test
@@ -63,13 +65,12 @@ final class TestStartupInteractor: EudiTest {
   func testInitialize_WhenIsNotFirstBootAndPinIsNotSet_ThenReturnQuickPinAppRoute() async throws {
     // Given
     let expectedConfig = QuickPinUiConfig(flow: .setWithActivation)
-    let expectedPid = Constants.createEuPidModel()
-    let expectedMdl = Constants.createIsoMdlModel()
-    stubFetchDocuments(with: [expectedPid, expectedMdl])
+    stubHasStoredDocuments(false)
     stubHasPin(with: false)
     stubRunAtLeastOnce()
     // When
-    let route = await interactor.initialize(with: .zero)
+    let state = await interactor.initialize(with: .zero)
+    let route = try XCTUnwrap(successRoute(from: state))
     // Then
     switch route {
     case .featureCommonModule(let module):
@@ -90,13 +91,12 @@ final class TestStartupInteractor: EudiTest {
   func testInitialize_WhenIsNotFirstBootAndPinIsSetAndHasIssuedDocuments_ThenReturnBiometricsAppRouteWithNavigationSuccessDashboard() async throws {
     // Given
     let expectedConfig = biometryConfig(with: true)
-    let expectedPid = Constants.createEuPidModel()
-    let expectedMdl = Constants.createIsoMdlModel()
-    stubFetchDocuments(with: [expectedPid, expectedMdl])
+    stubHasStoredDocuments(true)
     stubHasPin(with: true)
     stubRunAtLeastOnce()
     // When
-    let route = await interactor.initialize(with: .zero)
+    let state = await interactor.initialize(with: .zero)
+    let route = try XCTUnwrap(successRoute(from: state))
     // Then
     switch route {
     case .featureCommonModule(let module):
@@ -117,11 +117,12 @@ final class TestStartupInteractor: EudiTest {
   func testInitialize_WhenIsNotFirstBootAndPinIsSetAndHasNoIssuedDocuments_ThenReturnBiometricsAppRouteWithNavigationSuccessAddDocument() async throws {
     // Given
     let expectedConfig = biometryConfig(with: false)
-    stubFetchDocuments(with: [])
+    stubHasStoredDocuments(false)
     stubHasPin(with: true)
     stubRunAtLeastOnce()
     // When
-    let route = await interactor.initialize(with: .zero)
+    let state = await interactor.initialize(with: .zero)
+    let route = try XCTUnwrap(successRoute(from: state))
     // Then
     switch route {
     case .featureCommonModule(let module):
@@ -142,13 +143,12 @@ final class TestStartupInteractor: EudiTest {
   func testInitialize_WhenIsFirstBootAndPinIsNotSet_ThenClearDocumentStorageAndReturnQuickPinAppRoute() async throws {
     // Given
     let expectedConfig = QuickPinUiConfig(flow: .setWithActivation)
-    let expectedPid = Constants.createEuPidModel()
-    let expectedMdl = Constants.createIsoMdlModel()
-    stubFetchDocuments(with: [expectedPid, expectedMdl])
+    stubHasStoredDocuments(false)
     stubHasPin(with: false)
     stubRunAtLeastOnce(false)
     // When
-    let route = await interactor.initialize(with: .zero)
+    let state = await interactor.initialize(with: .zero)
+    let route = try XCTUnwrap(successRoute(from: state))
     // Then
     switch route {
     case .featureCommonModule(let module):
@@ -174,7 +174,8 @@ final class TestStartupInteractor: EudiTest {
     stubRunAtLeastOnce(false)
     stubTrustMarkIntroductionCompleted(false)
     // When
-    let route = await interactor.initialize(with: .zero)
+    let state = await interactor.initialize(with: .zero)
+    let route = try XCTUnwrap(successRoute(from: state))
     // Then
     XCTAssertNil(trustMarkConfig(from: route))
     switch route {
@@ -217,11 +218,42 @@ final class TestStartupInteractor: EudiTest {
 }
 
 private extension TestStartupInteractor {
-  
-  func stubFetchDocuments(with documents: [any DocClaimsDecodable]) {
+
+  /// A document store that holds documents until the first-boot wipe clears it.
+  final class RecordingWipe: Sendable {
+
+    private let isWiped = OSAllocatedUnfairLock(initialState: false)
+
+    var hasDocuments: Bool {
+      isWiped.withLock { !$0 }
+    }
+
+    func wipe() {
+      isWiped.withLock { $0 = true }
+    }
+  }
+
+  static let documentsCheckError = KeyChainError.readFailed(status: errSecDecode)
+
+  func successRoute(from state: StartupPartialState) -> AppRoute? {
+    guard case .success(let route) = state else { return nil }
+    return route
+  }
+
+  func failureError(from state: StartupPartialState) -> Error? {
+    guard case .failure(let error) = state else { return nil }
+    return error
+  }
+
+  func stubDocumentsCheckFailure() {
     stub(walletKitController) { mock in
-      when(mock.loadDocuments()).thenDoNothing()
-      when(mock.fetchAllDocuments()).thenReturn(documents)
+      when(mock.hasStoredDocuments()).thenThrow(Self.documentsCheckError)
+    }
+  }
+
+  func stubHasStoredDocuments(_ hasDocuments: Bool) {
+    stub(walletKitController) { mock in
+      when(mock.hasStoredDocuments()).thenReturn(hasDocuments)
     }
   }
   
