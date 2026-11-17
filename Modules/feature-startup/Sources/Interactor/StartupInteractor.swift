@@ -56,11 +56,19 @@ final actor StartupInteractorImpl: StartupInteractor {
   /// document is loaded before login: whether any exist is read from the Keychain without them.
   public func initialize(with splashAnimationDuration: TimeInterval) async -> StartupPartialState {
     await manageStorageForFirstRun()
-    try? await walletKitController.loadDocuments()
-    let hasDocuments = await !walletKitController.fetchAllDocuments().isEmpty
+    let storedDocuments: Result<Bool, Error>
+    do {
+      storedDocuments = .success(try await walletKitController.hasStoredDocuments())
+    } catch {
+      storedDocuments = .failure(error)
+    }
     try? await Task.sleep(nanoseconds: splashAnimationDuration.nanoseconds)
     // The EU Trust Mark welcome screen is not shown in the Norwegian demo wallet.
-    return await getContinuationRoute(hasDocuments: hasDocuments)
+    do {
+      return .success(try await getContinuationRoute(storedDocuments: storedDocuments))
+    } catch {
+      return .failure(error)
+    }
   }
 
   /// `storedDocuments` is whether the wallet holds documents, or why that could not be read.
