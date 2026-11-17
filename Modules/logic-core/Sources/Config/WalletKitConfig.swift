@@ -326,13 +326,13 @@ struct WalletKitConfigImpl: WalletKitConfig {
           revocationPolicy: .ocspOnly
         )
       ),
-      defaultPolicy: .warning,
+      defaultPolicy: .enforce,
       docTypePolicies: [
         DocumentTypeIdentifier.mDocPid.rawValue: .warning,
         DocumentTypeIdentifier.sdJwtPid.rawValue: .warning
       ],
-      requireSignedMetadata: false,
-      statusTrustPolicy: .warning,
+      requireSignedMetadata: true,
+      statusTrustPolicy: .enforce,
       readerTrustPolicy: .enforce,
       wrprcVpTrustPolicy: .warning,
       wrprcVciTrustPolicy: .warning
@@ -419,7 +419,7 @@ struct WalletKitConfigImpl: WalletKitConfig {
   }
 
   var revocationIntervalSeconds: TimeInterval {
-    300
+    10
   }
 
   var workerStopTimeoutSeconds: TimeInterval {
