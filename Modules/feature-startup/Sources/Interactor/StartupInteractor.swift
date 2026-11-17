@@ -17,9 +17,16 @@ import Foundation
 import feature_common
 import logic_core
 import logic_business
+import logic_authentication
+
+/// The route start-up continues to, or the error that stops it.
+public enum StartupPartialState: Sendable {
+  case success(AppRoute)
+  case failure(Error)
+}
 
 public protocol StartupInteractor: Sendable {
-  func initialize(with splashAnimationDuration: TimeInterval) async -> AppRoute
+  func initialize(with splashAnimationDuration: TimeInterval) async -> StartupPartialState
 }
 
 final actor StartupInteractorImpl: StartupInteractor {
@@ -44,7 +51,10 @@ final actor StartupInteractorImpl: StartupInteractor {
     self.configLogic = configLogic
   }
 
-  public func initialize(with splashAnimationDuration: TimeInterval) async -> AppRoute {
+  /// Routes to login when a PIN exists and to PIN creation only when the wallet is known to hold no
+  /// documents. A PIN record that cannot be read, or documents without one, end in `failure`. No
+  /// document is loaded before login: whether any exist is read from the Keychain without them.
+  public func initialize(with splashAnimationDuration: TimeInterval) async -> StartupPartialState {
     await manageStorageForFirstRun()
     try? await walletKitController.loadDocuments()
     let hasDocuments = await !walletKitController.fetchAllDocuments().isEmpty
@@ -53,8 +63,10 @@ final actor StartupInteractorImpl: StartupInteractor {
     return await getContinuationRoute(hasDocuments: hasDocuments)
   }
 
-  private func getContinuationRoute(hasDocuments: Bool) async -> AppRoute {
-    if await quickPinInteractor.hasPin() {
+  /// `storedDocuments` is whether the wallet holds documents, or why that could not be read.
+  private func getContinuationRoute(storedDocuments: Result<Bool, Error>) async throws -> AppRoute {
+    let hasDocuments = (try? storedDocuments.get()) ?? false
+    if try await quickPinInteractor.hasPin() {
       return .featureCommonModule(
         .biometry(
           config: UIConfig.Biometry(
@@ -75,6 +87,12 @@ final actor StartupInteractorImpl: StartupInteractor {
         )
       )
     } else {
+      if case .failure(let error) = storedDocuments {
+        throw error
+      }
+      guard !hasDocuments else {
+        throw AuthenticationError.pinNotFound
+      }
       return .featureCommonModule(
         .quickPin(
           config: QuickPinUiConfig(
